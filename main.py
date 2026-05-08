@@ -17,9 +17,14 @@ response = client.models.generate_content(
     model = gemini_model, contents = test_prompt
 )
 
+if response.usage_metadata is None:
+    raise RuntimeError("Response does not contain usage metadata. Likely a failed API call, try running the script again.")
+
 def main():
-    print("Hello from bootdev-ai-agent-python!")
-    print(response.text)
+    print(f"User prompt: {test_prompt}")
+    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
+    print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
+    print(f"Response: \n{response.text}")
 
 
 if __name__ == "__main__":
