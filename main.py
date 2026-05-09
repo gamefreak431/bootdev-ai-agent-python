@@ -12,11 +12,15 @@ def generate_content(client, messages, gemini_model):
         raise RuntimeError("Response does not contain usage metadata. Likely a failed API call, try running the script again.")
     return response
 
-def main():
+def api_key_check():
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         raise KeyError("GEMINI_API_KEY not found in environment variables.")
+    return api_key
+
+def main():
+    api_key = api_key_check()
     client = genai.Client(api_key=api_key)
     gemini_model = "gemini-2.5-flash"
 
