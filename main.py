@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from google import genai
 from google.genai import types
 
-def generate_content(client, messages, gemini_model):
+def generate_content(client, messages, gemini_model = "gemini-2.5-flash"):
     response = client.models.generate_content(
         model = gemini_model, contents = messages
     )
@@ -22,7 +22,6 @@ def api_key_check():
 def main():
     api_key = api_key_check()
     client = genai.Client(api_key=api_key)
-    gemini_model = "gemini-2.5-flash"
 
     parser = argparse.ArgumentParser()
     parser.add_argument("user_prompt", help="The prompt to send to the Gemini API")
@@ -30,7 +29,7 @@ def main():
     prompt = args.user_prompt
     messages = [types.Content(role="user", parts=[types.Part(text=prompt)])]
 
-    response = generate_content(client, messages, gemini_model)
+    response = generate_content(client, messages)
     print(f"User prompt: {prompt}")
     print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
     print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
