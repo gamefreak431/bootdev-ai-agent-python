@@ -2,6 +2,7 @@ import os
 import argparse
 from dotenv import load_dotenv
 from google import genai
+from google.genai import types
 
 def main():
     load_dotenv()
@@ -15,10 +16,10 @@ def main():
     parser.add_argument("user_prompt", help="The prompt to send to the Gemini API")
     args = parser.parse_args()
     prompt = args.user_prompt
-    test_prompt = "Why is Boot.dev such a great place to learn backend development? Use one paragraph maximum."
+    messages = [types.Content(role="user", parts=[types.Part(text=prompt)])]
 
     response = client.models.generate_content(
-        model = gemini_model, contents = prompt
+        model = gemini_model, contents = messages
     )
     if response.usage_metadata is None:
         raise RuntimeError("Response does not contain usage metadata. Likely a failed API call, try running the script again.")
