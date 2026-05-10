@@ -16,7 +16,8 @@ def api_key_check():
         raise KeyError("GEMINI_API_KEY not found in environment variables.")
     return api_key
 
-def generate_content(client, messages, gemini_model = "gemini-2.5-flash"):
+def generate_content(api_key, messages, gemini_model = "gemini-2.5-flash"):
+    client = genai.Client(api_key=api_key)
     response = client.models.generate_content(
         model = gemini_model, contents = messages
     )
@@ -34,13 +35,12 @@ def display_content(prompt, response, verbose):
 def main():
     load_dotenv()
     api_key = api_key_check()
-    client = genai.Client(api_key=api_key)
-
     args = cli_args()
+    
     prompt = args.user_prompt
     messages = [types.Content(role="user", parts=[types.Part(text=prompt)])]
 
-    response = generate_content(client, messages)
+    response = generate_content(api_key, messages)
     print(display_content(prompt, response, args.verbose))
 
 
