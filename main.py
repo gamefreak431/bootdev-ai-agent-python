@@ -33,10 +33,10 @@ def display_content(prompt, response, verbose):
     return response.text
 
 def main():
+    args = cli_args()
     load_dotenv()
     api_key = api_key_check()
-    args = cli_args()
-    
+
     prompt = args.user_prompt
     messages = [types.Content(role="user", parts=[types.Part(text=prompt)])]
 
