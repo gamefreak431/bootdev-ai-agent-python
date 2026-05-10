@@ -12,6 +12,13 @@ def generate_content(client, messages, gemini_model = "gemini-2.5-flash"):
         raise RuntimeError("Response does not contain usage metadata. Likely a failed API call, try running the script again.")
     return response
 
+def display_content(prompt, response, verbose):
+    prompt_tokens = response.usage_metadata.prompt_token_count
+    candidates_tokens = response.usage_metadata.candidates_token_count
+    if verbose:
+        return f"User prompt: {prompt}\nPrompt tokens: {prompt_tokens}\nResponse tokens: {candidates_tokens}\nResponse:\n{response.text}"
+    return response.text
+
 def api_key_check():
     load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -25,15 +32,13 @@ def main():
 
     parser = argparse.ArgumentParser()
     parser.add_argument("user_prompt", help="The prompt to send to the Gemini API")
+    parser.add_argument("--verbose", action="store_true", help="Print additional information about the API response")
     args = parser.parse_args()
     prompt = args.user_prompt
     messages = [types.Content(role="user", parts=[types.Part(text=prompt)])]
 
     response = generate_content(client, messages)
-    print(f"User prompt: {prompt}")
-    print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-    print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
-    print(f"Response: \n{response.text}")
+    print(display_content(prompt, response, args.verbose))
 
 
 if __name__ == "__main__":
