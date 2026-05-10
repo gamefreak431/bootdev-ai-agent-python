@@ -13,7 +13,7 @@ def cli_args():
 def api_key_check():
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
-        raise KeyError("GEMINI_API_KEY not found in environment variables.")
+        raise ValueError("GEMINI_API_KEY not found in environment variables.")
     return api_key
 
 def generate_content(api_key, messages, gemini_model = "gemini-2.5-flash"):
