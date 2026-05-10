@@ -20,13 +20,13 @@ def display_content(prompt, response, verbose):
     return response.text
 
 def api_key_check():
-    load_dotenv()
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key:
         raise KeyError("GEMINI_API_KEY not found in environment variables.")
     return api_key
 
 def main():
+    load_dotenv()
     api_key = api_key_check()
     client = genai.Client(api_key=api_key)
 
