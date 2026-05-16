@@ -1,6 +1,7 @@
 import os
 import argparse
 from dotenv import load_dotenv
+from config import system_prompt
 from google import genai
 from google.genai import types
 
@@ -19,7 +20,12 @@ def api_key_check():
 def generate_content(api_key, messages, gemini_model = "gemini-2.5-flash"):
     client = genai.Client(api_key=api_key)
     response = client.models.generate_content(
-        model = gemini_model, contents = messages
+        model = gemini_model,
+        contents = messages,
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            temperature=0
+        )
     )
     if response.usage_metadata is None:
         raise RuntimeError("Response does not contain usage metadata. Likely a failed API call, try running the script again.")
