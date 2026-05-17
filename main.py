@@ -2,6 +2,7 @@ import os
 import argparse
 from dotenv import load_dotenv
 from config import system_prompt
+from config import available_functions
 from google import genai
 from google.genai import types
 
@@ -24,7 +25,8 @@ def generate_content(api_key, messages, gemini_model = "gemini-2.5-flash"):
         contents = messages,
         config=types.GenerateContentConfig(
             system_instruction=system_prompt,
-            temperature=0
+            temperature=0,
+            tools=[available_functions]
         )
     )
     if response.usage_metadata is None:
@@ -34,9 +36,13 @@ def generate_content(api_key, messages, gemini_model = "gemini-2.5-flash"):
 def display_content(prompt, response, verbose):
     prompt_tokens = response.usage_metadata.prompt_token_count
     candidates_tokens = response.usage_metadata.candidates_token_count
+    if response.function_calls:
+        functions_called = "\n".join([f"Calling function: {function_call.name}({function_call.args})" for function_call in response.function_calls])
+    output = functions_called if response.function_calls else response.text
+    
     if verbose:
-        return f"User prompt: {prompt}\nPrompt tokens: {prompt_tokens}\nResponse tokens: {candidates_tokens}\nResponse:\n{response.text}"
-    return response.text
+        return f"User prompt: {prompt}\nPrompt tokens: {prompt_tokens}\nResponse tokens: {candidates_tokens}\n{output}"
+    return output
 
 def main():
     args = cli_args()
